@@ -1,8 +1,25 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 export default function SignUp() {
+    const [isRendered, setIsRendered] = useState(false);
+    useEffect(() => {
+        setIsRendered(true);
+    }, []);
+
+    const onSubmitHandler = (e) => {
+        e.preventDefault();
+    };
     return (
-        <div className="bg-slate-200 border-2 border-slate-300 rounded-lg p-4 w-1/2">
-            <form action="" className="flex flex-col gap-2 items-center my-20">
+        <div
+            className={`bg-slate-200 border-2 border-slate-300 rounded-lg p-4 w-1/2 transition-transform duration-500 ${
+                isRendered ? "translate-y-0 scale-100" : "-translate-y-56 scale-50"
+            }`}
+        >
+            <form
+                onSubmit={onSubmitHandler}
+                action=""
+                className="flex flex-col gap-2 items-center my-20"
+            >
                 <h1 className="text-center text-2xl font-bold mb-5">
                     Signup for free
                 </h1>
