@@ -1,18 +1,49 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
+import axiosClient from "../axios-client";
+import { useStateContext } from "../contexts/ContextProvider";
 export default function SignUp() {
+    const nameRef = useRef();
+    const emailRef = useRef();
+    const passwordRef = useRef();
+    const passwordConfirmationRef = useRef();
     const [isRendered, setIsRendered] = useState(false);
+    const { setUser, setToken } = useStateContext();
     useEffect(() => {
         setIsRendered(true);
     }, []);
 
     const onSubmitHandler = (e) => {
         e.preventDefault();
+        const payload = {
+            name: nameRef.current.value,
+            email: emailRef.current.value,
+            password: passwordRef.current.value,
+            password_confirmation: passwordConfirmationRef.current.value,
+        };
+        axiosClient
+            .post("/signup", payload)
+            .then(({ data }) => {
+                setUser(data.user);
+                setToken(data.token);
+                nameRef.current.value = "";
+                emailRef.current.value = "";
+                passwordRef.current.value = "";
+                passwordConfirmationRef.current.value = "";
+            })
+            .catch((err) => {
+                const response = err.response;
+                if (response && response.status === 422) {
+                    console.log(response.data.errors);
+                }
+            });
     };
     return (
         <div
             className={`bg-slate-200 border-2 border-slate-300 rounded-lg p-4 w-1/2 transition-transform duration-500 ${
-                isRendered ? "translate-y-0 scale-100" : "-translate-y-56 scale-50"
+                isRendered
+                    ? "translate-y-0 scale-100"
+                    : "-translate-y-56 scale-50"
             }`}
         >
             <form
@@ -20,7 +51,7 @@ export default function SignUp() {
                 action=""
                 className="flex flex-col gap-2 items-center my-20"
             >
-                <h1 className="text-center text-2xl font-bold mb-5">
+                <h1 className="text-center text-4xl font-bold mb-5">
                     Signup for free
                 </h1>
                 <div className="flex flex-col w-3/4">
@@ -28,6 +59,7 @@ export default function SignUp() {
                         Fullname
                     </label>
                     <input
+                        ref={nameRef}
                         type="text"
                         name="fullname"
                         required
@@ -40,6 +72,7 @@ export default function SignUp() {
                         Email
                     </label>
                     <input
+                        ref={emailRef}
                         type="email"
                         name="email"
                         required
@@ -52,6 +85,7 @@ export default function SignUp() {
                         Password
                     </label>
                     <input
+                        ref={passwordRef}
                         type="password"
                         name="password"
                         required
@@ -64,6 +98,7 @@ export default function SignUp() {
                         Password confirmation
                     </label>
                     <input
+                        ref={passwordConfirmationRef}
                         type="password"
                         required
                         className="p-2 rounded-md"

@@ -22,7 +22,7 @@ export default function Login() {
                 action=""
                 className="flex flex-col gap-2 items-center my-20"
             >
-                <h1 className="text-center text-2xl font-bold mb-5">
+                <h1 className="text-center text-4xl font-bold mb-5">
                     Login into your account
                 </h1>
                 <div className="flex flex-col w-3/4">
