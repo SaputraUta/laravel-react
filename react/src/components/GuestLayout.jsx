@@ -6,8 +6,7 @@ export default function GuestLayout() {
         return <Navigate to="/"/>
     }
     return (
-        <div>
-            For Guest Only
+        <div className="bg-slate-400 h-screen flex items-center justify-center text-slate-700 placeholder:text-slate-700">
             <Outlet />
         </div>
     );
