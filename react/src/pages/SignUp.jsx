@@ -22,6 +22,7 @@ export default function SignUp() {
             password: passwordRef.current.value,
             password_confirmation: passwordConfirmationRef.current.value,
         };
+        setErrors(null);
         axiosClient
             .post("/signup", payload)
             .then(({ data }) => {
@@ -34,7 +35,6 @@ export default function SignUp() {
             })
             .catch((err) => {
                 const response = err.response;
-                console.log(response.data.errors);
                 if (response && response.status === 422) {
                     console.log(response.data.errors);
                     setErrors(response.data.errors);
@@ -67,6 +67,7 @@ export default function SignUp() {
                         name="fullname"
                         className="p-2 rounded-md"
                         placeholder="John Doe"
+                        required
                     />
                     {errors && errors.name && (
                         <p className="text-red-500">{errors.name[0]}</p>
@@ -82,6 +83,7 @@ export default function SignUp() {
                         name="email"
                         className="p-2 rounded-md"
                         placeholder="example@gmail.com"
+                        required
                     />
                     {errors && errors.email && (
                         <p className="text-red-500">{errors["email"][0]}</p>
@@ -97,6 +99,7 @@ export default function SignUp() {
                         name="password"
                         className="p-2 rounded-md"
                         placeholder="Enter your password"
+                        required
                     />
                     {errors && errors.password && (
                         <p className="text-red-500">{errors["password"][0]}</p>
@@ -111,6 +114,7 @@ export default function SignUp() {
                         type="password"
                         className="p-2 rounded-md"
                         placeholder="Confirm your password"
+                        required
                     />
                 </div>
                 <button

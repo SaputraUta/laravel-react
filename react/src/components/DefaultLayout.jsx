@@ -3,9 +3,10 @@ import { useStateContext } from "../contexts/ContextProvider";
 import { Link } from "react-router-dom";
 import { MdLogout } from "react-icons/md";
 import { FaHome, FaUsers } from "react-icons/fa";
-
+import axiosClient from "../axios-client";
+import { useEffect } from "react";
 export default function DefaultLayout() {
-    const { user, token } = useStateContext();
+    const { user, token, setUser, setToken } = useStateContext();
 
     if (!token) {
         return <Navigate to="/login" />;
@@ -13,7 +14,15 @@ export default function DefaultLayout() {
 
     const onLogout = (e) => {
         e.preventDefault();
+        axiosClient.post("/logout").then(() => {
+            setUser({});
+            setToken(null);
+        });
     };
+    useEffect(() => {
+        axiosClient.get("/user").then(({ data }) => setUser(data));
+    }, []);
+
     return (
         <div className="flex">
             <header className="min-h-screen w-64 bg-slate-700 text-slate-100 font-bold text-xl">

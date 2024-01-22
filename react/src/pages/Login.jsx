@@ -1,13 +1,43 @@
-import { useEffect, useState } from "react";
-
+import { useEffect, useState, useRef } from "react";
+import { useStateContext } from "../contexts/ContextProvider";
 import { Link } from "react-router-dom";
+import axiosClient from "../axios-client";
 export default function Login() {
+    const emailRef = useRef();
+    const passwordRef = useRef();
+    const { setUser, setToken } = useStateContext();
+    const [errors, setErrors] = useState(null);
     const [isRendered, setIsRendered] = useState(false);
     useEffect(() => {
         setIsRendered(true);
     }, []);
     const onSubmitHandler = (e) => {
         e.preventDefault();
+        const payload = {
+            email: emailRef.current.value,
+            password: passwordRef.current.value,
+        };
+        setErrors(null);
+        axiosClient
+            .post("/login", payload)
+            .then(({ data }) => {
+                setUser(data.user);
+                setToken(data.token);
+                emailRef.current.value = "";
+                passwordRef.current.value = "";
+            })
+            .catch((err) => {
+                const response = err.response;
+                if (response && response.status === 422) {
+                    if (response.data.errors) {
+                        setErrors(response.data.errors);
+                    } else {
+                        setErrors({
+                            email: [response.data.message],
+                        });
+                    }
+                }
+            });
     };
     return (
         <div
@@ -30,24 +60,32 @@ export default function Login() {
                         Email
                     </label>
                     <input
+                        ref={emailRef}
                         type="email"
                         name="email"
                         required
                         className="p-2 rounded-md"
                         placeholder="example@gmail.com"
                     />
+                    {errors && errors.email && (
+                        <p className="text-red-500">{errors.email[0]}</p>
+                    )}
                 </div>
                 <div className="flex flex-col w-3/4">
                     <label htmlFor="password" className="text-lg font-medium">
                         Password
                     </label>
                     <input
+                        ref={passwordRef}
                         type="password"
                         name="password"
                         required
                         className="p-2 rounded-md"
                         placeholder="Enter your password"
                     />
+                    {errors && errors.password && (
+                        <p className="text-red-500">{errors.password[0]}</p>
+                    )}
                 </div>
                 <button
                     type="submit"
