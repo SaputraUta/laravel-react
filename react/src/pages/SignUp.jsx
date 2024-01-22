@@ -9,6 +9,7 @@ export default function SignUp() {
     const passwordConfirmationRef = useRef();
     const [isRendered, setIsRendered] = useState(false);
     const { setUser, setToken } = useStateContext();
+    const [errors, setErrors] = useState(null);
     useEffect(() => {
         setIsRendered(true);
     }, []);
@@ -33,8 +34,10 @@ export default function SignUp() {
             })
             .catch((err) => {
                 const response = err.response;
+                console.log(response.data.errors);
                 if (response && response.status === 422) {
                     console.log(response.data.errors);
+                    setErrors(response.data.errors);
                 }
             });
     };
@@ -62,10 +65,12 @@ export default function SignUp() {
                         ref={nameRef}
                         type="text"
                         name="fullname"
-                        required
                         className="p-2 rounded-md"
                         placeholder="John Doe"
                     />
+                    {errors && errors.name && (
+                        <p className="text-red-500">{errors.name[0]}</p>
+                    )}
                 </div>
                 <div className="flex flex-col w-3/4">
                     <label htmlFor="email" className="text-lg font-medium">
@@ -75,10 +80,12 @@ export default function SignUp() {
                         ref={emailRef}
                         type="email"
                         name="email"
-                        required
                         className="p-2 rounded-md"
                         placeholder="example@gmail.com"
                     />
+                    {errors && errors.email && (
+                        <p className="text-red-500">{errors["email"][0]}</p>
+                    )}
                 </div>
                 <div className="flex flex-col w-3/4">
                     <label htmlFor="password" className="text-lg font-medium">
@@ -88,10 +95,12 @@ export default function SignUp() {
                         ref={passwordRef}
                         type="password"
                         name="password"
-                        required
                         className="p-2 rounded-md"
                         placeholder="Enter your password"
                     />
+                    {errors && errors.password && (
+                        <p className="text-red-500">{errors["password"][0]}</p>
+                    )}
                 </div>
                 <div className="flex flex-col w-3/4">
                     <label className="text-lg font-medium">
@@ -100,7 +109,6 @@ export default function SignUp() {
                     <input
                         ref={passwordConfirmationRef}
                         type="password"
-                        required
                         className="p-2 rounded-md"
                         placeholder="Confirm your password"
                     />
